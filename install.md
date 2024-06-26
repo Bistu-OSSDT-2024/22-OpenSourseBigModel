@@ -1,2 +1,2 @@
-INTALL
-java编译环境下运行
+#INTALL
+##java编译环境下运行
