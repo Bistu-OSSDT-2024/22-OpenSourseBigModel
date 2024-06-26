@@ -1,1 +1,1 @@
-# OpenSourseBigModel_22
+# 22-maze
