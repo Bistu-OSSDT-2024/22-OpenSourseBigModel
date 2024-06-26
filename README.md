@@ -31,7 +31,7 @@ Java语言开发
 2. 地址：北京信息科技大学沙河校区
 
 ## 版权所有
-该开源项目采用Apache License2.0许可证
+该开源项目采用Apache-2.0 License许可证
 
 ## 部分代码来源
 https://open.bigmodel.cn/overview
