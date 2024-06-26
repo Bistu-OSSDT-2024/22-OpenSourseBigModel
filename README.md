@@ -17,11 +17,11 @@ Java语言开发
 赵永瑞
 
 ## 开发人员
-1.郭语洋 Ae0lusgyy
-2.余冰焱 yby-a
-3.程煜琳 Linlang233
-4.李宜嘉 yijiujiu-liao
-5.张岱真 lebronzdz
+1. 郭语洋 Ae0lusgyy
+2. 余冰焱 yby-a
+3. 程煜琳 Linlang233
+4. 李宜嘉 yijiujiu-liao
+5. 张岱真 lebronzdz
 
 ## 管理团队
 吴彦组
