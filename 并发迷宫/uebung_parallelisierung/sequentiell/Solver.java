@@ -310,58 +310,49 @@ private static void displayLabyrinth(Solver solver) {
 	executorService.shutdown(); // 关闭线程池
 }*/
 	public static void main(String[] args) {
-		CopyOnWriteArrayList<Long> runTimes = asyncCallPaginatedApiTemp(args);
-		List<Long> runTimesSort = runTimes.stream().filter(f -> null != f).sorted().collect(Collectors.toList());
-		System.out.println("runTimesSort:" + runTimesSort);
-		System.out.println("Median run time was " + runTimesSort.get(N_RUNS_HALF) + " ms.");
-	}
-
-	public static CopyOnWriteArrayList<Long> asyncCallPaginatedApiTemp(String[] args) {
-		CopyOnWriteArrayList<Long> runTimes = new CopyOnWriteArrayList<>(new Long[2*N_RUNS_HALF + 1]);
-		int total = 2*N_RUNS_HALF + 1;
-		ExecutorService executorService = Executors.newFixedThreadPool(total);
-		List<CompletableFuture<Void>> futureList = IntStream.range(0, total)
-				.mapToObj(i -> CompletableFuture.runAsync(() -> {
-					System.out.println("输出i的值：" + i);
-					// 执行任务
-					singleMethod(args, runTimes, i);
-				}, executorService))
-				.collect(Collectors.toList());
-
-		// 等待所有任务完成
-		CompletableFuture.allOf(futureList.toArray(new CompletableFuture[0])).join();
-		executorService.shutdown();
-		return runTimes;
-	}
-
-	public static void singleMethod(String[] args, CopyOnWriteArrayList<Long> runTimes, int run){
-		Solver solver = makeAndSaveSolver(args);
-		if (solver.labyrinth.smallEnoughToDisplay()) {
-			displayLabyrinth(solver);
-		}
-
-		long startTime = System.currentTimeMillis();
-		solver.solution = solver.solve();
-		long endTime = System.currentTimeMillis();
-
-		if (solver.solution == null)
-			System.out.println("No solution exists.");
-		else {
-			System.out.println("Computed sequential solution of length " + solver.solution.length + " to labyrinth of size " +
-					solver.labyrinth.getWidth() + "x" + solver.labyrinth.getHeight() + " in " + (endTime - startTime) + "ms.");
-			System.out.println("runTimes.add ：" + run);
-			runTimes.add(run, endTime - startTime);
-
-			if (solver.labyrinth.smallEnoughToDisplay()) {
-				solver.displaySolution();
-				solver.printSolution();
-			}
-
-			if (solver.labyrinth.checkSolution(solver.solution))
-				System.out.println("Solution correct :-)");
-			else
-				System.out.println("Solution incorrect :-(");
-		}
-	}
-
+    CopyOnWriteArrayList<Long> runTimes = asyncCallPaginatedApiTemp(args);
+    List<Long> runTimesSort = runTimes.stream().filter(f -> null != f).sorted().collect(Collectors.toList());
+    System.out.println("Median run time was " + runTimesSort.get(N_RUNS_HALF) + " ms.");
+    Solver lastSolver = makeAndSaveSolver(args); // 重新创建最后一个迷宫解图
+    if (lastSolver.labyrinth.smallEnoughToDisplay()) {
+       displayLabyrinth(lastSolver);
+       lastSolver.solution = lastSolver.solve(); // 计算解
+       lastSolver.displaySolution(); // 显示解
+    }
 }
+
+    public static CopyOnWriteArrayList<Long> asyncCallPaginatedApiTemp(String[] args) {
+       CopyOnWriteArrayList<Long> runTimes = new CopyOnWriteArrayList<>(new Long[2 * N_RUNS_HALF + 1]);
+       int total = 2 * N_RUNS_HALF + 1;
+       ExecutorService executorService = Executors.newFixedThreadPool(total);
+       List<CompletableFuture<Void>> futureList = IntStream.range(0, total)
+             .mapToObj(i -> CompletableFuture.runAsync(() -> {
+                // 执行任务
+                singleMethod(args, runTimes, i);
+             }, executorService))
+             .collect(Collectors.toList());
+
+       // 等待所有任务完成
+       CompletableFuture.allOf(futureList.toArray(new CompletableFuture[0])).join();
+       executorService.shutdown();
+       return runTimes;
+    }
+
+    public static void singleMethod(String[] args, CopyOnWriteArrayList<Long> runTimes, int run) {
+       Solver solver = makeAndSaveSolver(args);
+       if (solver.labyrinth.smallEnoughToDisplay()) {
+          // displayLabyrinth(solver); // 注释掉显示迷宫的代码
+       }
+
+       long startTime = System.currentTimeMillis();
+       solver.solution = solver.solve();
+       long endTime = System.currentTimeMillis();
+
+       if (solver.solution == null) {
+          System.out.println("No solution exists.");
+       } else {
+          runTimes.add(run, endTime - startTime);
+       }
+    }
+}
+
